@@ -28,7 +28,7 @@ from app.models.application.index import (
     PublicBody,
     PublicBodyId,
     SDSUploadCoronersLetterResponse,
-    SDSUploadClaimEvidenceResponse
+    SDSUploadClaimEvidenceResponse,
 )
 
 SECRET_KEY = "TEST_KEY"
