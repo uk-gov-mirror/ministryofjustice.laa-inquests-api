@@ -29,7 +29,6 @@ def _make_request_body(client_overrides=None):
             "county": "Greater London",
             "postcode": "SW1A 1AA",
         },
-        "isClientCorrespondenceRecipient": True,
     }
     if client_overrides:
         client.update(client_overrides)
@@ -129,7 +128,6 @@ def test_201_responds_with_expected_client_details(client, auth_token):
         "county": None,
         "postcode": "SW1A 1AA",
     }
-    assert new_application["client"]["isClientCorrespondenceRecipient"] is True
     assert new_application["client"]["correspondenceRecipient"] is None
     assert client["homeAddress"] == {
         "addressLine1": "1 Example Lane",
@@ -332,7 +330,6 @@ def test_201_create_application_includes_explicit_correspondence_recipient(
     client, auth_token
 ):
     body = _make_request_body()
-    body["client"]["isClientCorrespondenceRecipient"] = False
     body["client"]["correspondenceRecipient"] = {
         "recipientType": "ORGANISATION",
         "recipientName": "Inquests Support Org",
@@ -348,32 +345,10 @@ def test_201_create_application_includes_explicit_correspondence_recipient(
     )
 
     assert response.status_code == 201
-    assert response.json()["client"]["isClientCorrespondenceRecipient"] is False
     assert response.json()["client"]["correspondenceRecipient"] == {
         "recipientType": "ORGANISATION",
         "recipientName": "Inquests Support Org",
     }
-
-
-def test_422_rejected_when_client_is_recipient_and_correspondence_recipient_provided(
-    client, auth_token
-):
-    body = _make_request_body()
-    body["client"]["correspondenceRecipient"] = {
-        "recipientType": "PERSON",
-        "recipientName": "Someone Else",
-    }
-
-    response = client.post(
-        "/applications",
-        json=body,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {auth_token}",
-        },
-    )
-
-    assert response.status_code == 422
 
 
 def test_201_create_application_response_includes_provider_email(client, auth_token):
@@ -395,42 +370,6 @@ def test_422_create_application_rejected_when_provider_email_missing(
 ):
     body = _make_request_body()
     del body["provider"]["emailAddress"]
-
-    response = client.post(
-        "/applications",
-        json=body,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {auth_token}",
-        },
-    )
-
-    assert response.status_code == 422
-
-
-def test_422_rejected_when_client_is_not_recipient_and_correspondence_recipient_missing(
-    client, auth_token
-):
-    body = _make_request_body()
-    body["client"]["isClientCorrespondenceRecipient"] = False
-
-    response = client.post(
-        "/applications",
-        json=body,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {auth_token}",
-        },
-    )
-
-    assert response.status_code == 422
-
-
-def test_422_rejected_when_is_client_correspondence_recipient_is_missing(
-    client, auth_token
-):
-    body = _make_request_body()
-    del body["client"]["isClientCorrespondenceRecipient"]
 
     response = client.post(
         "/applications",

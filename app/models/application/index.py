@@ -110,7 +110,7 @@ class Client(ClientBase, table=True):
     home_address: Optional["Address"] = Relationship(
         sa_relationship_kwargs={"foreign_keys": "[Client.home_address_id]"}
     )
-    is_client_correspondence_recipient: bool = True
+    # is_client_the_correspondence_addressee: bool = True
     correspondence_recipient_type: CorrespondenceRecipientType | None = Field(
         default=None,
         sa_column=Column(Enum(CorrespondenceRecipientType), nullable=True),
@@ -119,8 +119,8 @@ class Client(ClientBase, table=True):
 
     @property
     def correspondence_recipient(self) -> Optional["CorrespondenceRecipientResponse"]:
-        if self.is_client_correspondence_recipient:
-            return None
+        # if self.is_client_the_correspondence_addressee:
+        #     return None
 
         if (
             self.correspondence_recipient_type is not None
@@ -326,24 +326,7 @@ class ClientCreate(BaseModel):
     correspondence_address: AddressCreate | None = None
     home_address: AddressCreate | None = None
     has_no_fixed_abode: bool = PydanticField(default=False, examples=[False])
-    is_client_correspondence_recipient: bool = PydanticField(examples=[False])
     correspondence_recipient: CorrespondenceRecipientCreate | None = None
-
-    @model_validator(mode="after")
-    def validate_correspondence_recipient(self) -> "ClientCreate":
-        if self.is_client_correspondence_recipient:
-            if self.correspondence_recipient is not None:
-                raise ValueError(
-                    "correspondence_recipient must not be provided when is_client_correspondence_recipient is true"
-                )
-            return self
-
-        if self.correspondence_recipient is None:
-            raise ValueError(
-                "correspondence_recipient is required when is_client_correspondence_recipient is false"
-            )
-
-        return self
 
     @model_validator(mode="after")
     def validate_home_address_against_fixed_abode(self) -> "ClientCreate":
@@ -487,7 +470,6 @@ class ClientResponse(BaseModel):
     has_applied_previously: bool = False
     prev_application_reference: str | None = None
     has_no_fixed_abode: bool = False
-    is_client_correspondence_recipient: bool
     correspondence_recipient: CorrespondenceRecipientResponse | None = None
 
 
