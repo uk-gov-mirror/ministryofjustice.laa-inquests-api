@@ -152,6 +152,7 @@ def test_internal_assurance_permission_set():
         Permission.HISTORY_READ,
         Permission.REPORTS_MI_READ,
         Permission.REPORTS_PAYMENT_READ,
+        Permission.REPORTS_AUDIT_TRAIL_READ,
     }
 
 
@@ -178,3 +179,13 @@ def test_internal_finance_permission_set():
         Permission.REPORTS_MI_READ,
         Permission.REPORTS_PAYMENT_READ,
     }
+
+
+def test_only_the_assurance_role_can_read_the_audit_trail_report():
+    roles_with_permission = {
+        role
+        for role, permissions in ROLE_PERMISSIONS_MAP.items()
+        if Permission.REPORTS_AUDIT_TRAIL_READ in permissions
+    }
+
+    assert roles_with_permission == {Role.ASSURANCE}

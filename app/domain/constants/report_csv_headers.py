@@ -35,3 +35,15 @@ PAYMENT_EXTRACT_REPORT_HEADERS = [
     "Model Number",
     "Provider Case Ref No",
 ]
+
+AUDIT_TRAIL_REPORT_HEADERS = [
+    "Event reference",
+    "Event title",
+    "Event description",
+    "Event date",
+    "Event time",
+    "Username",
+    "Case reference",
+    "Firm name",
+    "Office account number",
+]

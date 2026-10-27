@@ -112,6 +112,16 @@ python bin/seed.py
 ```
 This is idempotent and safe to run multiple times. It must be run after `alembic upgrade head` so the schema exists.
 
+To seed development data (never run this in a deployed environment) run:
+```bash
+python bin/seed_dev.py
+```
+`docker compose` and `./run_local.sh` do this for you. It seeds two granted applications, `INQ-YYY-YYY` and `INQ-XXX-XXX`, with the claims and history events that each state implies: an approved payment on account (POA) claim, a POA claim awaiting assessment, and for `INQ-XXX-XXX` a final bill claim awaiting assessment. Set `SEED_DEV_APPLICATION_COUNT` to also add that many randomly referenced granted applications, each with approved POA claims, a POA claim awaiting assessment and a paid final bill claim (`SEED_DEV_FIRM_CODES` sets which firms they belong to).
+
+The seeded data follows the rules the services apply, so it is a safe base for development and demos. In particular, decisions, funds remaining and payment extract lines are produced by the same domain functions the services use, and history events carry the actors and event data the services record. `INQ-XXX-XXX`, `INQ-YYY-YYY` and their POA claim references are fixed placeholders so that they are easy to recognise.
+
+The named seed is keyed on its coroners letter, so re-running it changes nothing. Rows seeded by an earlier version of the script are not updated: reset your local database to pick up changes, with `docker compose down -v` and then `./run_local.sh`.
+
 To run the web server run:
 
 ```shell

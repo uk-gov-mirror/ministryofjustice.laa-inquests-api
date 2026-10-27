@@ -30,6 +30,7 @@ class Permission(str, Enum):
     REPORTS_PAYMENT_READ = "reports-payment:read"
     REPORTS_APPLICATION_WORKFLOW_READ = "reports-application-workflow:read"
     REPORTS_CLAIM_WORKFLOW_READ = "reports-claim-workflow:read"
+    REPORTS_AUDIT_TRAIL_READ = "reports-audit-trail:read"
 
 
 class Role(str, Enum):
@@ -87,6 +88,7 @@ ROLE_PERMISSIONS_MAP: dict[Role, set[Permission]] = {
         Permission.HISTORY_READ,
         Permission.REPORTS_MI_READ,
         Permission.REPORTS_PAYMENT_READ,
+        Permission.REPORTS_AUDIT_TRAIL_READ,
     },
     Role.APPLICATION_WORKFLOW_REPORTING: {
         Permission.REPORTS_APPLICATION_WORKFLOW_READ,
